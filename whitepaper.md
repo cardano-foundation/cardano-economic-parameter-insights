@@ -213,14 +213,14 @@ where in square brackets we have the approximation of $`f`$, showing its terms f
 
 # Pool Distribution and Rewards<span id="subsec:Pool-Distribution" label="subsec:Pool-Distribution"></span>
 
-The historical evidence in Figure <a href="#fandp" data-reference-type="ref" data-reference="fandp">4</a> provides a striking confirmation of the goodness of the approximation just computed, and of the expectation that $`\frac{1}{1+\alpha}=\frac{1}{1+a_{0}}\approx77\%`$ is the dominant component of the $`f`$ adjustment. The other components of $`f`$, which should increase the rewards above the $`\frac{1}{1+a_{0}}`$ minimum, accounted for less than 2% in the last few years. This evidence that aggregate rewards were little higher than the amount that applies to pools with no pledge needs to be rooted in the distribution of the staking pools during the period. We analyze this in the following, keeping the analysis simple and based on few basic statistics.
+The historical evidence in Figure <a href="#fandp" data-reference-type="ref" data-reference="fandp">4</a> provides a striking confirmation of the goodness of the approximation just computed, and of the expectation that $`\frac{1}{1+\alpha}=\frac{1}{1+a_{0}}\approx77\%`$ is the dominant component of the $`f`$ adjustment. The other components of $`f`$, which should increase the rewards above the $`\frac{1}{1+a_{0}}`$ minimum, accounted for less than 2% in the last few years. This evidence that aggregate rewards were little higher than the amount that applies to pools with no pledge needs to be rooted in the distribution of the staking pools during the period. We analyze this in the following, keeping the analysis simple and based on few basic statistics. We use first, as a measure for the pledge, the amount declared by pools. This is a pool parameter that can be easily read onchain. Only at the end of the section we will look at the amount of actual pledge (own stake actually committed) and we will see how the discrepancy between declared and actual pledge has a negligible impact on aggregate rewards, and why this has to be expected in the current situation.
 
 <figure id="fig_average_median_pools">
 <img src="./figures/stakepledgemeanmedian.png" width="400" />
 <figcaption><strong>Average and Median Stake and Pledge.</strong> The figure covers the period from epoch 311-470.</figcaption>
 </figure>
 
-**Statistics**. We see in Figure <a href="#fig_average_median_pools" data-reference-type="ref" data-reference="fig_average_median_pools">5</a> that the average pool had a stake between 7 and 8 Million ADA. The average pledge was around 1.5 Million ADA. This amount of own tokens is not very high, but it is significantly above zero. We know from the initial analysis that the pledge has different effects on pools with different stake, so we need to know more than the average stake and pledge, to understand why there is so little effect from the pledge. Since the median is the value with 50% higher observations and 50% lowest observations, median values could add relevant information, but here we see that median stake and pledge are very small, due to the presence of very many very small pools. So median data do not help understand the real distribution of the pools in terms of stake and pledge size.
+**Statistics**. We see in Figure <a href="#fig_average_median_pools" data-reference-type="ref" data-reference="fig_average_median_pools">5</a> that the average pool had a stake between 7 and 8 Million ADA. The average pledge was around 1.5 Million ADA. This amount is not very high, but it is significantly above zero. We know from the initial analysis that the pledge has different effects on pools with different stake, so we need to know more than the average stake and pledge, to understand why there is so little effect from the pledge. Since the median is the value with 50% higher observations and 50% lower observations, median values could add relevant information, but here we see that median stake and pledge are very small, due to the presence of very many very small pools. So median data do not help understand the real distribution of the pools in terms of stake and pledge size.
 
 Let’s build slightly more granular, and more targeted, statistics. In Figure <a href="#fig_pools_by_stake" data-reference-type="eqref" data-reference="fig_pools_by_stake">[fig_pools_by_stake]</a> the upper chart shows how the stake has been distributed across different classes of stake,
 ``` math
@@ -277,6 +277,20 @@ This shows that on average, across the period the 0-7M class held 6.3% of the st
 </figure>
 
 However rough, this statistic support the assumption that the current level of own stake and its distribution across pools leads to rewards that, on average, near those of a pool with no own stake. Indeed, even for large saturated pools, financial optimization may lead to a low amount of pledge, since for them a higher pledge increases the total rewards for large pools, but the yield on own capital may be reduced when increasing the pledge. Thus even large pools may find it sub-optimal to replace delegated capital with own capital in order to get the last 23% of the full reward potential. A precise utility and cost assessment, and the interplay with parameters setting minimum costs and margins for individual pools, are left to future research.
+
+**Declared vs Committed Pledge**
+
+In this section we have used as pledge the amount declared by stake pool operators, not the own money actually provided. In principle, the two amounts should nearly coincide, since pools not matching the pledge receive no rewards. Yet this is not always the case. The main discrepancies regard small recent pools that have not yet matched the declared pledge, and pools that, while no more active and containing no active stake, have not yet been retired. Some of these used to be large and have large declared pledge, even if they have no more activer stake now. Both cases only affect the pool statistics for the first bucket, i.e. SPOPs with stake in the 0-7M range. This can be seen in in Figure <a href="#fig_average by class_comm" data-reference-type="ref" data-reference="fig_average by class_comm">5</a>: actual pledge is much smaller in the first bucket than declared pledge we saw above. The discrepancy becomes smaller and smaller, the larger are the pools in the buckets. Indeed, the larger the pools, the more effective it is to have high actual pledge. Because of this pattern, if now estimate the aggregate rewards based on actual rather than declared pledge, the effect is negligible, as we see in Figure <a href="#fig_estimate_by_class_comm" data-reference-type="ref" data-reference="fig_estimate_by_class_comm">5</a>. This is a confirmation of the very limited effect of pledge on the rewards of small pools: in spite of a large discrepancy between actual and declared pledge for small pool, the effect of this on aggregate rewards is negligible.
+
+<figure id="fig_average by class_comm">
+<img src="./figures/average by class_comm.png" width="400" />
+<figcaption><strong>Average and Median Stake and Pledge.</strong> Actually committed pledge. The figure covers the period from epoch 311-470.</figcaption>
+</figure>
+
+<figure id="fig_estimate_by_class_comm">
+<img src="./figures/estimate by class_comm.png" width="400" />
+<figcaption><strong>Average and Median Stake and Pledge.</strong> Actually committed pledge. The figure covers the period from epoch 311-470.</figcaption>
+</figure>
 
 # Actual Reserves and Treasury Distribution
 
@@ -370,12 +384,12 @@ It is useful to see the relevance of the different parts of this equation. So fa
 ``` math
 \begin{aligned}
 \mathrm{Reserve}_{i} & =\mathrm{Reserve}_{i-1}-\rho\eta_{i}\mathrm{Reserve}_{i-1}+\rho\eta_{i}\mathrm{Reserve}_{i-1}\left(1-\tau\right)\left(1-p_{i}f_{i}\right)\\
- & =\mathrm{Reserve}_{i-1}\left(1-\rho\eta_{i}\left(\tau-\left(1-\tau\right)p_{i}f_{i}\right)\right).
+ & =\mathrm{Reserve}_{i-1}\left(1-\rho\eta_{i}\left(\tau+\left(1-\tau\right)p_{i}f_{i}\right)\right).
 \end{aligned}
 ```
 This equation has a trivial solution
 ``` math
-\mathrm{Reserve}_{i}=\mathrm{Reserve}_{0}\prod_{j=1}^{i}\left(1-\rho\eta_{i}\left(\tau-\left(1-\tau\right)p_{i}f_{i}\right)\right),
+\mathrm{Reserve}_{i}=\mathrm{Reserve}_{0}\prod_{j=1}^{i}\left(1-\rho\eta_{i}\left(\tau+\left(1-\tau\right)p_{i}f_{i}\right)\right),
 ```
 expressing directly current reserves in terms of their level at an initial epoch. This is equation allows also to project easily Reserves into the future. However, we have to remember not only that we still have to consider the impact of Fees, currently very small but potentially relevant in the future, but also that the elements introduced, compared to the simplified version in (<a href="#eq:fundamental simple" data-reference-type="ref" data-reference="eq:fundamental simple">[eq:fundamental simple]</a>), are stochastic, which meas that they vary randomly.
 
